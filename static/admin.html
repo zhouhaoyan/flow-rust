@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>花花草草记录系统 - 管理面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 0;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 25px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 25px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #444;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .username {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 24px;
+            color: #444;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #444;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #444;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .form-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            color: #444;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        #loadingIndicator {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏导航 -->
+    <nav class="sidebar">
+        <div class="logo">
+            <span class="logo-icon">🌸</span>
+            <span class="logo-text">花花草草</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link active" data-section="dashboard"><span class="nav-icon">📊</span>仪表板</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="plant-archive"><span class="nav-icon">📚</span>品种档案</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="growth-logs-batch1"><span class="nav-icon">🌱</span>生长日志（第一批）</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="growth-logs-batch2"><span class="nav-icon">🌿</span>生长日志（第二批）</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="yield-records"><span class="nav-icon">📈</span>产量记录</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="germination-stats"><span class="nav-icon">📊</span>发芽统计</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="non-seedling-records"><span class="nav-icon">🌳</span>非育苗植物</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="fertilizer-materials"><span class="nav-icon">🧪</span>肥料材料</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="container-sizes"><span class="nav-icon">📦</span>容器尺寸</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-section="todo-reminders"><span class="nav-icon">📝</span>待办提醒</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 class="page-title">管理面板</h1>
+            <div class="user-info">
+                <span class="username">欢迎，<span id="currentUsername">admin</span></span>
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+            </div>
+        </div>
+
+        <!-- 消息容器 -->
+        <div id="messageContainer"></div>
+
+        <!-- 仪表板 -->
+        <div id="dashboard" class="content-section">
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <h3 id="plantArchiveCount">0</h3>
+                        <p>品种档案</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌱</div>
+                    <div class="stat-info">
+                        <h3 id="growthLogsCount">0</h3>
+                        <p>生长日志</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <h3 id="yieldRecordsCount">0</h3>
+                        <p>产量记录</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <h3 id="germinationStatsCount">0</h3>
+                        <p>发芽统计</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <h2 class="section-title">系统概览</h2>
+                <p>欢迎使用花花草草记录系统管理面板。请使用左侧导航菜单管理各个数据表。</p>
+                <p>系统功能包括：</p>
+                <ul style="margin: 15px 0 15px 20px;">
+                    <li>品种档案管理</li>
+                    <li>生长日志记录（第一批和第二批）</li>
+                    <li>产量记录管理</li>
+                    <li>发芽与活苗率统计</li>
+                    <li>非育苗植物记录</li>
+                    <li>肥料与基质信息管理</li>
+                    <li>种植容器尺寸管理</li>
+                    <li>待办提醒管理</li>
+                </ul>
+                <p>所有数据变更需要用户确认，确保数据准确性。</p>
+            </div>
+        </div>
+
+        <!-- 品种档案 -->
+        <div id="plant-archive" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">品种档案管理</h2>
+                <button class="btn" id="addPlantArchiveBtn">添加品种</button>
+            </div>
+            <div class="content-area">
+                <div id="plantArchiveLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="plantArchiveTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>简称</th>
+                                <th>品种名称</th>
+                                <th>种类</th>
+                                <th>品种类型</th>
+                                <th>株高/习性</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生长日志（第一批） -->
+        <div id="growth-logs-batch1" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">生长日志（第一批）</h2>
+                <button class="btn" id="addGrowthLogBatch1Btn">添加记录</button>
+            </div>
+            <div class="content-area">
+                <div id="growthLogsBatch1Loading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="growthLogsBatch1Table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>品种</th>
+                                <th>日期</th>
+                                <th>事件类型</th>
+                                <th>数量/部位</th>
+                                <th>详情记录</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 其他部分类似，为简洁起见省略 -->
+        <div id="growth-logs-batch2" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">生长日志（第二批）</h2>
+                <button class="btn" id="addGrowthLogBatch2Btn">添加记录</button>
+            </div>
+            <div class="content-area">
+                <div id="growthLogsBatch2Loading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="growthLogsBatch2Table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>品种</th>
+                                <th>日期</th>
+                                <th>事件类型</th>
+                                <th>数量/部位</th>
+                                <th>详情记录</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产量记录 -->
+        <div id="yield-records" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">产量记录管理</h2>
+                <button class="btn" id="addYieldRecordBtn">添加记录</button>
+            </div>
+            <div class="content-area">
+                <div id="yieldRecordsLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="yieldRecordsTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>品种</th>
+                                <th>收获日期</th>
+                                <th>数量</th>
+                                <th>单位</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 发芽统计（只读） -->
+        <div id="germination-stats" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">发芽统计管理</h2>
+                <p>此数据为自动计算，不可编辑</p>
+            </div>
+            <div class="content-area">
+                <div id="germinationStatsLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="germinationStatsTable">
+                        <thead>
+                            <tr>
+                                <th>批次</th>
+                                <th>品种</th>
+                                <th>播种日期</th>
+                                <th>出芽数</th>
+                                <th>出芽率</th>
+                                <th>存活数</th>
+                                <th>存活率</th>
+                                <th>最后更新</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 非育苗植物记录 -->
+        <div id="non-seedling-records" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">非育苗植物记录管理</h2>
+                <button class="btn" id="addNonSeedlingRecordBtn">添加记录</button>
+            </div>
+            <div class="content-area">
+                <div id="nonSeedlingRecordsLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="nonSeedlingRecordsTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>植物名称</th>
+                                <th>记录日期</th>
+                                <th>记录类型</th>
+                                <th>详情</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 肥料材料 -->
+        <div id="fertilizer-materials" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">肥料材料管理</h2>
+                <button class="btn" id="addFertilizerMaterialBtn">添加材料</button>
+            </div>
+            <div class="content-area">
+                <div id="fertilizerMaterialsLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="fertilizerMaterialsTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>名称</th>
+                                <th>类别</th>
+                                <th>描述</th>
+                                <th>使用说明</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 容器尺寸 -->
+        <div id="container-sizes" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">容器尺寸管理</h2>
+                <button class="btn" id="addContainerSizeBtn">添加容器</button>
+            </div>
+            <div class="content-area">
+                <div id="containerSizesLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="containerSizesTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>容器类型</th>
+                                <th>尺寸</th>
+                                <th>数量</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待办提醒 -->
+        <div id="todo-reminders" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">待办提醒管理</h2>
+                <button class="btn" id="addTodoReminderBtn">添加提醒</button>
+            </div>
+            <div class="content-area">
+                <div id="todoRemindersLoading" class="loading-indicator">加载中...</div>
+                <div class="table-container">
+                    <table id="todoRemindersTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>内容</th>
+                                <th>优先级</th>
+                                <th>截止日期</th>
+                                <th>状态</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载指示器 -->
+        <div id="loadingIndicator" style="display: none;">加载中...</div>
+    </main>
+
+    <!-- 模态框（用于添加/编辑） -->
+    <div id="formModal" class="form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">添加记录</h3>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="dataForm">
+                <div id="formFields">
+                    <!-- 动态表单字段将在此插入 -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn" id="submitFormBtn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentSection = 'dashboard';
+        let currentData = {};
+        let currentEditId = null;
+
+        // 检查登录状态
+        function checkLogin() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // 显示消息
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // 切换内容部分
+        function switchSection(sectionId) {
+            // 隐藏所有部分
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // 移除所有导航项的active类
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // 显示目标部分
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // 设置对应的导航项为active
+            const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // 更新当前部分
+            currentSection = sectionId;
+
+            // 加载部分数据
+            loadSectionData(sectionId);
+        }
+
+        // 加载部分数据
+        async function loadSectionData(sectionId) {
+            switch(sectionId) {
+                case 'dashboard':
+                    await loadDashboardStats();
+                    break;
+                case 'plant-archive':
+                    await loadPlantArchives();
+                    break;
+                case 'growth-logs-batch1':
+                    await loadGrowthLogs('batch1');
+                    break;
+                case 'growth-logs-batch2':
+                    await loadGrowthLogs('batch2');
+                    break;
+                case 'yield-records':
+                    await loadYieldRecords();
+                    break;
+                case 'germination-stats':
+                    await loadGerminationStats();
+                    break;
+                case 'non-seedling-records':
+                    await loadNonSeedlingRecords();
+                    break;
+                case 'fertilizer-materials':
+                    await loadFertilizerMaterials();
+                    break;
+                case 'container-sizes':
+                    await loadContainerSizes();
+                    break;
+                case 'todo-reminders':
+                    await loadTodoReminders();
+                    break;
+                // 其他部分...
+            }
+        }
+
+        // 加载仪表板统计
+        async function loadDashboardStats() {
+            try {
+                const responses = await Promise.all([
+                    fetch('/api/plant-archive').then(r => r.json()),
+                    fetch('/api/growth-logs?batch=batch1').then(r => r.json()),
+                    fetch('/api/yield-records').then(r => r.json()),
+                    fetch('/api/germination-stats').then(r => r.json())
+                ]);
+
+                // 更新计数
+                document.getElementById('plantArchiveCount').textContent =
+                    responses[0].success ? responses[0].archives?.length || 0 : 0;
+                document.getElementById('growthLogsCount').textContent =
+                    responses[1].success ? responses[1].logs?.length || 0 : 0;
+                document.getElementById('yieldRecordsCount').textContent =
+                    responses[2].success ? responses[2].yield_records?.length || 0 : 0;
+                document.getElementById('germinationStatsCount').textContent =
+                    responses[3].success ? responses[3].stats?.length || 0 : 0;
+
+            } catch (error) {
+                console.error('加载统计失败:', error);
+            }
+        }
+
+        // 加载品种档案
+        async function loadPlantArchives() {
+            const loadingEl = document.getElementById('plantArchiveLoading');
+            const tableBody = document.querySelector('#plantArchiveTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/plant-archive');
+                const data = await response.json();
+
+                if (data.success && data.archives) {
+                    data.archives.forEach(archive => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${archive.id}</td>
+                            <td>${archive.short_name}</td>
+                            <td>${archive.full_name || ''}</td>
+                            <td>${archive.category || ''}</td>
+                            <td>${archive.variety_type || ''}</td>
+                            <td>${archive.height_habit || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editPlantArchive(${archive.id})">编辑</button>
+                                <button class="btn btn-danger" onclick="deletePlantArchive(${archive.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载生长日志
+        async function loadGrowthLogs(batch) {
+            const loadingId = batch === 'batch1' ? 'growthLogsBatch1Loading' : 'growthLogsBatch2Loading';
+            const tableId = batch === 'batch1' ? 'growthLogsBatch1Table' : 'growthLogsBatch2Table';
+
+            const loadingEl = document.getElementById(loadingId);
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch(`/api/growth-logs?batch=${batch}`);
+                const data = await response.json();
+
+                if (data.success && data.logs) {
+                    data.logs.forEach(log => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${log.id}</td>
+                            <td>${log.plant_short_name}</td>
+                            <td>${log.event_date}</td>
+                            <td>${log.event_type}</td>
+                            <td>${log.quantity_location || ''}</td>
+                            <td>${log.details || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editGrowthLog(${log.id}, '${batch}')">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteGrowthLog(${log.id}, '${batch}')">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 打开添加品种档案表单
+        async function openAddPlantArchiveForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加品种档案';
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="short_name">简称 *</label>
+                    <input type="text" id="short_name" name="short_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="full_name">品种名称</label>
+                    <input type="text" id="full_name" name="full_name">
+                </div>
+                <div class="form-group">
+                    <label for="category">种类</label>
+                    <input type="text" id="category" name="category">
+                </div>
+                <div class="form-group">
+                    <label for="variety_type">品种类型</label>
+                    <input type="text" id="variety_type" name="variety_type">
+                </div>
+                <div class="form-group">
+                    <label for="height_habit">株高/习性</label>
+                    <input type="text" id="height_habit" name="height_habit">
+                </div>
+                <div class="form-group">
+                    <label for="fruit_features">果实特征</label>
+                    <textarea id="fruit_features" name="fruit_features" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taste_use">口感/用途</label>
+                    <textarea id="taste_use" name="taste_use" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="estimated_yield">单株预估产量</label>
+                    <input type="text" id="estimated_yield" name="estimated_yield">
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加生长日志表单
+        async function openAddGrowthLogForm(batch) {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = `添加生长日志（${batch === 'batch1' ? '第一批' : '第二批'}）`;
+
+            // 先获取品种档案用于下拉菜单
+            let plantOptions = '<option value="">请选择品种</option>';
+            try {
+                const response = await fetch('/api/plant-archive');
+                const data = await response.json();
+                if (data.success && data.archives) {
+                    plantOptions += data.archives.map(archive =>
+                        `<option value="${archive.short_name}">${archive.short_name} (${archive.full_name || ''})</option>`
+                    ).join('');
+                }
+            } catch (error) {
+                console.error('加载品种档案失败:', error);
+            }
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="plant_short_name">品种 *</label>
+                    <select id="plant_short_name" name="plant_short_name" required>${plantOptions}</select>
+                </div>
+                <div class="form-group">
+                    <label for="event_date">日期 * (YYYY-MM-DD)</label>
+                    <input type="date" id="event_date" name="event_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="event_type">事件类型 *</label>
+                    <select id="event_type" name="event_type" required>
+                        <option value="播种">播种</option>
+                        <option value="出芽">出芽</option>
+                        <option value="假植">假植</option>
+                        <option value="移栽">移栽</option>
+                        <option value="死亡">死亡</option>
+                        <option value="观察">观察</option>
+                        <option value="操作">操作</option>
+                        <option value="处理">处理</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantity_location">数量/部位</label>
+                    <input type="text" id="quantity_location" name="quantity_location">
+                </div>
+                <div class="form-group">
+                    <label for="details">详情记录</label>
+                    <textarea id="details" name="details" rows="4"></textarea>
+                </div>
+                <input type="hidden" id="batch" name="batch" value="${batch}">
+            `;
+
+            // 设置默认日期为今天
+            document.getElementById('event_date').valueAsDate = new Date();
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加产量记录表单
+        async function openAddYieldRecordForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加产量记录';
+
+            // 先获取品种档案用于下拉菜单
+            let plantOptions = '<option value="">请选择品种</option>';
+            try {
+                const response = await fetch('/api/plant-archive');
+                const data = await response.json();
+                if (data.success && data.archives) {
+                    plantOptions += data.archives.map(archive =>
+                        `<option value="${archive.short_name}">${archive.short_name} (${archive.full_name || ''})</option>`
+                    ).join('');
+                }
+            } catch (error) {
+                console.error('加载品种档案失败:', error);
+            }
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="plant_short_name">品种 *</label>
+                    <select id="plant_short_name" name="plant_short_name" required>${plantOptions}</select>
+                </div>
+                <div class="form-group">
+                    <label for="yield_date">收获日期 * (YYYY-MM-DD)</label>
+                    <input type="date" id="yield_date" name="yield_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">数量 *</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="unit">单位</label>
+                    <input type="text" id="unit" name="unit" value="个">
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            // 设置默认日期为今天
+            document.getElementById('yield_date').valueAsDate = new Date();
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加非育苗植物记录表单
+        async function openAddNonSeedlingRecordForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加非育苗植物记录';
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="plant_name">植物名称 *</label>
+                    <input type="text" id="plant_name" name="plant_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="record_date">记录日期 * (YYYY-MM-DD)</label>
+                    <input type="date" id="record_date" name="record_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="record_type">记录类型 *</label>
+                    <select id="record_type" name="record_type" required>
+                        <option value="种植">种植</option>
+                        <option value="生长">生长</option>
+                        <option value="开花">开花</option>
+                        <option value="结果">结果</option>
+                        <option value="收获">收获</option>
+                        <option value="观察">观察</option>
+                        <option value="操作">操作</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="details">详情</label>
+                    <textarea id="details" name="details" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            // 设置默认日期为今天
+            document.getElementById('record_date').valueAsDate = new Date();
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加肥料材料表单
+        async function openAddFertilizerMaterialForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加肥料材料';
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="name">名称 *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">类别</label>
+                    <input type="text" id="category" name="category">
+                </div>
+                <div class="form-group">
+                    <label for="description">描述</label>
+                    <textarea id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="usage_instructions">使用说明</label>
+                    <textarea id="usage_instructions" name="usage_instructions" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加容器尺寸表单
+        async function openAddContainerSizeForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加容器尺寸';
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="container_type">容器类型 *</label>
+                    <input type="text" id="container_type" name="container_type" required>
+                </div>
+                <div class="form-group">
+                    <label for="dimensions">尺寸（长×宽×高）</label>
+                    <input type="text" id="dimensions" name="dimensions">
+                </div>
+                <div class="form-group">
+                    <label for="quantity">数量 *</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 打开添加待办提醒表单
+        async function openAddTodoReminderForm() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '添加待办提醒';
+
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="content">内容 *</label>
+                    <textarea id="content" name="content" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="priority">优先级 *</label>
+                    <select id="priority" name="priority" required>
+                        <option value="high">高</option>
+                        <option value="medium" selected>中</option>
+                        <option value="low">低</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="due_date">截止日期 (YYYY-MM-DD)</label>
+                    <input type="date" id="due_date" name="due_date">
+                </div>
+                <div class="form-group">
+                    <label for="notes">备注</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+            `;
+
+            // 设置默认日期为明天
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('due_date').valueAsDate = tomorrow;
+
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        // 提交表单
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitFormBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '保存中...';
+
+            try {
+                const formData = new FormData(document.getElementById('dataForm'));
+                const data = Object.fromEntries(formData.entries());
+
+                let url, method;
+                if (currentSection === 'plant-archive') {
+                    url = '/api/plant-archive';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else if (currentSection.startsWith('growth-logs')) {
+                    const batch = data.batch || 'batch1';
+                    url = '/api/growth-logs';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) {
+                        url = `/api/growth-logs/${batch}/${currentEditId}`;
+                        delete data.batch;
+                    }
+                } else if (currentSection === 'yield-records') {
+                    url = '/api/yield-records';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else if (currentSection === 'non-seedling-records') {
+                    url = '/api/non-seedling-records';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else if (currentSection === 'fertilizer-materials') {
+                    url = '/api/fertilizers';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else if (currentSection === 'container-sizes') {
+                    url = '/api/containers';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else if (currentSection === 'todo-reminders') {
+                    url = '/api/todo-reminders';
+                    method = currentEditId ? 'PUT' : 'POST';
+                    if (currentEditId) url += `/${currentEditId}`;
+                } else {
+                    throw new Error('未知的部分');
+                }
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    closeModal();
+                    await loadSectionData(currentSection);
+                    await loadDashboardStats();
+                } else {
+                    showMessage('保存失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('formModal').style.display = 'none';
+            document.getElementById('dataForm').reset();
+            currentEditId = null;
+        }
+
+        // 编辑品种档案
+        async function editPlantArchive(id) {
+            try {
+                const response = await fetch(`/api/plant-archive/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.archive) {
+                    const archive = data.archive;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑品种档案';
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="short_name">简称 *</label>
+                            <input type="text" id="short_name" name="short_name" value="${archive.short_name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="full_name">品种名称</label>
+                            <input type="text" id="full_name" name="full_name" value="${archive.full_name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">种类</label>
+                            <input type="text" id="category" name="category" value="${archive.category || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="variety_type">品种类型</label>
+                            <input type="text" id="variety_type" name="variety_type" value="${archive.variety_type || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="height_habit">株高/习性</label>
+                            <input type="text" id="height_habit" name="height_habit" value="${archive.height_habit || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fruit_features">果实特征</label>
+                            <textarea id="fruit_features" name="fruit_features" rows="2">${archive.fruit_features || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="taste_use">口感/用途</label>
+                            <textarea id="taste_use" name="taste_use" rows="2">${archive.taste_use || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="estimated_yield">单株预估产量</label>
+                            <input type="text" id="estimated_yield" name="estimated_yield" value="${archive.estimated_yield || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${archive.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载品种档案失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除品种档案
+        async function deletePlantArchive(id) {
+            if (!confirm('确定要删除这个品种档案吗？')) return;
+
+            try {
+                const response = await fetch(`/api/plant-archive/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadPlantArchives();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑产量记录
+        async function editYieldRecord(id) {
+            try {
+                const response = await fetch(`/api/yield-records/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.yield_record) {
+                    const record = data.yield_record;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑产量记录';
+
+                    // 先获取品种档案用于下拉菜单
+                    let plantOptions = '<option value="">请选择品种</option>';
+                    try {
+                        const plantResponse = await fetch('/api/plant-archive');
+                        const plantData = await plantResponse.json();
+                        if (plantData.success && plantData.archives) {
+                            plantOptions += plantData.archives.map(archive =>
+                                `<option value="${archive.short_name}" ${archive.short_name === record.plant_short_name ? 'selected' : ''}>${archive.short_name} (${archive.full_name || ''})</option>`
+                            ).join('');
+                        }
+                    } catch (error) {
+                        console.error('加载品种档案失败:', error);
+                    }
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="plant_short_name">品种 *</label>
+                            <select id="plant_short_name" name="plant_short_name" required>${plantOptions}</select>
+                        </div>
+                        <div class="form-group">
+                            <label for="yield_date">收获日期 * (YYYY-MM-DD)</label>
+                            <input type="date" id="yield_date" name="yield_date" value="${record.yield_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">数量 *</label>
+                            <input type="number" id="quantity" name="quantity" value="${record.quantity}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="unit">单位</label>
+                            <input type="text" id="unit" name="unit" value="${record.unit || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${record.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载产量记录失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除产量记录
+        async function deleteYieldRecord(id) {
+            if (!confirm('确定要删除这个产量记录吗？')) return;
+
+            try {
+                const response = await fetch(`/api/yield-records/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadYieldRecords();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑非育苗植物记录
+        async function editNonSeedlingRecord(id) {
+            try {
+                const response = await fetch(`/api/non-seedling-records/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.record) {
+                    const record = data.record;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑非育苗植物记录';
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="plant_name">植物名称 *</label>
+                            <input type="text" id="plant_name" name="plant_name" value="${record.plant_name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="record_date">记录日期 * (YYYY-MM-DD)</label>
+                            <input type="date" id="record_date" name="record_date" value="${record.record_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="record_type">记录类型 *</label>
+                            <select id="record_type" name="record_type" required>
+                                <option value="种植" ${record.record_type === '种植' ? 'selected' : ''}>种植</option>
+                                <option value="生长" ${record.record_type === '生长' ? 'selected' : ''}>生长</option>
+                                <option value="开花" ${record.record_type === '开花' ? 'selected' : ''}>开花</option>
+                                <option value="结果" ${record.record_type === '结果' ? 'selected' : ''}>结果</option>
+                                <option value="收获" ${record.record_type === '收获' ? 'selected' : ''}>收获</option>
+                                <option value="观察" ${record.record_type === '观察' ? 'selected' : ''}>观察</option>
+                                <option value="操作" ${record.record_type === '操作' ? 'selected' : ''}>操作</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="details">详情</label>
+                            <textarea id="details" name="details" rows="4">${record.details || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${record.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载非育苗植物记录失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除非育苗植物记录
+        async function deleteNonSeedlingRecord(id) {
+            if (!confirm('确定要删除这个非育苗植物记录吗？')) return;
+
+            try {
+                const response = await fetch(`/api/non-seedling-records/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadNonSeedlingRecords();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑肥料材料
+        async function editFertilizerMaterial(id) {
+            try {
+                const response = await fetch(`/api/fertilizers/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.material) {
+                    const material = data.material;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑肥料材料';
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="name">名称 *</label>
+                            <input type="text" id="name" name="name" value="${material.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">类别</label>
+                            <input type="text" id="category" name="category" value="${material.category || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">描述</label>
+                            <textarea id="description" name="description" rows="3">${material.description || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="usage_instructions">使用说明</label>
+                            <textarea id="usage_instructions" name="usage_instructions" rows="3">${material.usage_instructions || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${material.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载肥料材料失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除肥料材料
+        async function deleteFertilizerMaterial(id) {
+            if (!confirm('确定要删除这个肥料材料吗？')) return;
+
+            try {
+                const response = await fetch(`/api/fertilizers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadFertilizerMaterials();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑容器尺寸
+        async function editContainerSize(id) {
+            try {
+                const response = await fetch(`/api/containers/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.container) {
+                    const container = data.container;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑容器尺寸';
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="container_type">容器类型 *</label>
+                            <input type="text" id="container_type" name="container_type" value="${container.container_type}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dimensions">尺寸（长×宽×高）</label>
+                            <input type="text" id="dimensions" name="dimensions" value="${container.dimensions || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">数量 *</label>
+                            <input type="number" id="quantity" name="quantity" value="${container.quantity}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${container.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载容器尺寸失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除容器尺寸
+        async function deleteContainerSize(id) {
+            if (!confirm('确定要删除这个容器尺寸吗？')) return;
+
+            try {
+                const response = await fetch(`/api/containers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadContainerSizes();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑待办提醒
+        async function editTodoReminder(id) {
+            try {
+                const response = await fetch(`/api/todo-reminders/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.todo) {
+                    const todo = data.todo;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑待办提醒';
+
+                    const dueDate = todo.due_date ? new Date(todo.due_date).toISOString().split('T')[0] : '';
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="content">内容 *</label>
+                            <textarea id="content" name="content" rows="3" required>${todo.content}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">优先级 *</label>
+                            <select id="priority" name="priority" required>
+                                <option value="high" ${todo.priority === 'high' ? 'selected' : ''}>高</option>
+                                <option value="medium" ${todo.priority === 'medium' ? 'selected' : ''}>中</option>
+                                <option value="low" ${todo.priority === 'low' ? 'selected' : ''}>低</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="due_date">截止日期 (YYYY-MM-DD)</label>
+                            <input type="date" id="due_date" name="due_date" value="${dueDate}">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" name="notes" rows="3">${todo.notes || ''}</textarea>
+                        </div>
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载待办提醒失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 切换待办提醒状态
+        async function toggleTodoStatus(id, currentCompleted) {
+            const completed = !currentCompleted;
+
+            try {
+                const response = await fetch(`/api/todo-reminders/${id}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completed })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(`待办提醒已标记为${completed ? '完成' : '待办'}`, 'success');
+                    await loadTodoReminders();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('状态更新失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除待办提醒
+        async function deleteTodoReminder(id) {
+            if (!confirm('确定要删除这个待办提醒吗？')) return;
+
+            try {
+                const response = await fetch(`/api/todo-reminders/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadTodoReminders();
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 编辑生长日志
+        async function editGrowthLog(id, batch) {
+            try {
+                const response = await fetch(`/api/growth-logs/${batch}/${id}`);
+                const data = await response.json();
+
+                if (data.success && data.log) {
+                    const log = data.log;
+                    currentEditId = id;
+                    document.getElementById('modalTitle').textContent = '编辑生长日志';
+
+                    // 先获取品种档案用于下拉菜单
+                    let plantOptions = '<option value="">请选择品种</option>';
+                    const plantResponse = await fetch('/api/plant-archive');
+                    const plantData = await plantResponse.json();
+                    if (plantData.success && plantData.archives) {
+                        plantOptions += plantData.archives.map(archive =>
+                            `<option value="${archive.short_name}" ${archive.short_name === log.plant_short_name ? 'selected' : ''}>${archive.short_name} (${archive.full_name || ''})</option>`
+                        ).join('');
+                    }
+
+                    const formFields = document.getElementById('formFields');
+                    formFields.innerHTML = `
+                        <div class="form-group">
+                            <label for="plant_short_name">品种 *</label>
+                            <select id="plant_short_name" name="plant_short_name" required>${plantOptions}</select>
+                        </div>
+                        <div class="form-group">
+                            <label for="event_date">日期 * (YYYY-MM-DD)</label>
+                            <input type="date" id="event_date" name="event_date" value="${log.event_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event_type">事件类型 *</label>
+                            <select id="event_type" name="event_type" required>
+                                <option value="播种" ${log.event_type === '播种' ? 'selected' : ''}>播种</option>
+                                <option value="出芽" ${log.event_type === '出芽' ? 'selected' : ''}>出芽</option>
+                                <option value="假植" ${log.event_type === '假植' ? 'selected' : ''}>假植</option>
+                                <option value="移栽" ${log.event_type === '移栽' ? 'selected' : ''}>移栽</option>
+                                <option value="死亡" ${log.event_type === '死亡' ? 'selected' : ''}>死亡</option>
+                                <option value="观察" ${log.event_type === '观察' ? 'selected' : ''}>观察</option>
+                                <option value="操作" ${log.event_type === '操作' ? 'selected' : ''}>操作</option>
+                                <option value="处理" ${log.event_type === '处理' ? 'selected' : ''}>处理</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity_location">数量/部位</label>
+                            <input type="text" id="quantity_location" name="quantity_location" value="${log.quantity_location || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="details">详情记录</label>
+                            <textarea id="details" name="details" rows="4">${log.details || ''}</textarea>
+                        </div>
+                        <input type="hidden" id="batch" name="batch" value="${batch}">
+                    `;
+
+                    document.getElementById('formModal').style.display = 'flex';
+                } else {
+                    showMessage('加载生长日志失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 删除生长日志
+        async function deleteGrowthLog(id, batch) {
+            if (!confirm('确定要删除这条生长日志吗？')) return;
+
+            try {
+                const response = await fetch(`/api/growth-logs/${batch}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+                    await loadGrowthLogs(batch);
+                    await loadDashboardStats();
+                } else {
+                    showMessage('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = '/login.html';
+        }
+
+        // 加载产量记录
+        async function loadYieldRecords() {
+            const loadingEl = document.getElementById('yieldRecordsLoading');
+            const tableBody = document.querySelector('#yieldRecordsTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/yield-records');
+                const data = await response.json();
+
+                if (data.success && data.yield_records) {
+                    data.yield_records.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.id}</td>
+                            <td>${record.plant_short_name}</td>
+                            <td>${record.yield_date}</td>
+                            <td>${record.quantity}</td>
+                            <td>${record.unit || ''}</td>
+                            <td>${record.notes || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editYieldRecord(${record.id})">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteYieldRecord(${record.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载发芽统计
+        async function loadGerminationStats() {
+            const loadingEl = document.getElementById('germinationStatsLoading');
+            const tableBody = document.querySelector('#germinationStatsTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/germination-stats');
+                const data = await response.json();
+
+                if (data.success && data.stats) {
+                    data.stats.forEach(stat => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${stat.batch || ''}</td>
+                            <td>${stat.plant_short_name}</td>
+                            <td>${stat.sowing_date || ''}</td>
+                            <td>${stat.germination_count || 0}</td>
+                            <td>${stat.germination_rate || '0%'}</td>
+                            <td>${stat.survival_count || 0}</td>
+                            <td>${stat.survival_rate || '0%'}</td>
+                            <td>${stat.last_updated || ''}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="8">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="8">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载非育苗植物记录
+        async function loadNonSeedlingRecords() {
+            const loadingEl = document.getElementById('nonSeedlingRecordsLoading');
+            const tableBody = document.querySelector('#nonSeedlingRecordsTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/non-seedling-records');
+                const data = await response.json();
+
+                if (data.success && data.records) {
+                    data.records.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.id}</td>
+                            <td>${record.plant_name}</td>
+                            <td>${record.record_date}</td>
+                            <td>${record.record_type}</td>
+                            <td>${record.details || ''}</td>
+                            <td>${record.notes || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editNonSeedlingRecord(${record.id})">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteNonSeedlingRecord(${record.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载肥料材料
+        async function loadFertilizerMaterials() {
+            const loadingEl = document.getElementById('fertilizerMaterialsLoading');
+            const tableBody = document.querySelector('#fertilizerMaterialsTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/fertilizers');
+                const data = await response.json();
+
+                if (data.success && data.materials) {
+                    data.materials.forEach(material => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${material.id}</td>
+                            <td>${material.name}</td>
+                            <td>${material.category || ''}</td>
+                            <td>${material.description || ''}</td>
+                            <td>${material.usage_instructions || ''}</td>
+                            <td>${material.notes || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editFertilizerMaterial(${material.id})">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteFertilizerMaterial(${material.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载容器尺寸
+        async function loadContainerSizes() {
+            const loadingEl = document.getElementById('containerSizesLoading');
+            const tableBody = document.querySelector('#containerSizesTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/containers');
+                const data = await response.json();
+
+                if (data.success && data.containers) {
+                    data.containers.forEach(container => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${container.id}</td>
+                            <td>${container.container_type}</td>
+                            <td>${container.dimensions || ''}</td>
+                            <td>${container.quantity}</td>
+                            <td>${container.notes || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editContainerSize(${container.id})">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteContainerSize(${container.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="6">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="6">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 加载待办提醒
+        async function loadTodoReminders() {
+            const loadingEl = document.getElementById('todoRemindersLoading');
+            const tableBody = document.querySelector('#todoRemindersTable tbody');
+
+            loadingEl.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/todo-reminders');
+                const data = await response.json();
+
+                if (data.success && data.todos) {
+                    data.todos.forEach(todo => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${todo.id}</td>
+                            <td>${todo.content}</td>
+                            <td>${todo.priority}</td>
+                            <td>${todo.due_date}</td>
+                            <td><span class="${todo.completed ? 'completed' : 'pending'}">${todo.completed ? '已完成' : '待办'}</span></td>
+                            <td>${todo.notes || ''}</td>
+                            <td class="actions">
+                                <button class="btn btn-secondary" onclick="editTodoReminder(${todo.id})">编辑</button>
+                                <button class="btn ${todo.completed ? 'btn-secondary' : 'btn-success'}" onclick="toggleTodoStatus(${todo.id}, ${todo.completed})">${todo.completed ? '标记待办' : '标记完成'}</button>
+                                <button class="btn btn-danger" onclick="deleteTodoReminder(${todo.id})">删除</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="7">${data.message || '加载失败'}</td></tr>`;
+                }
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7">网络错误: ${error.message}</td></tr>`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            if (!checkLogin()) return;
+
+            // 设置用户名
+            const username = localStorage.getItem('username') || 'admin';
+            document.getElementById('currentUsername').textContent = username;
+
+            // 绑定导航点击事件
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.dataset.section;
+                    switchSection(sectionId);
+                });
+            });
+
+            // 绑定按钮事件
+            document.getElementById('addPlantArchiveBtn')?.addEventListener('click', openAddPlantArchiveForm);
+            document.getElementById('addGrowthLogBatch1Btn')?.addEventListener('click', () => openAddGrowthLogForm('batch1'));
+            document.getElementById('addGrowthLogBatch2Btn')?.addEventListener('click', () => openAddGrowthLogForm('batch2'));
+            document.getElementById('addYieldRecordBtn')?.addEventListener('click', openAddYieldRecordForm);
+            document.getElementById('addNonSeedlingRecordBtn')?.addEventListener('click', openAddNonSeedlingRecordForm);
+            document.getElementById('addFertilizerMaterialBtn')?.addEventListener('click', openAddFertilizerMaterialForm);
+            document.getElementById('addContainerSizeBtn')?.addEventListener('click', openAddContainerSizeForm);
+            document.getElementById('addTodoReminderBtn')?.addEventListener('click', openAddTodoReminderForm);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // 绑定模态框事件
+            document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('dataForm').addEventListener('submit', submitForm);
+
+            // 点击模态框背景关闭
+            document.getElementById('formModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // 初始加载
+            switchSection('dashboard');
+        });
+
+        // 处理键盘事件
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
