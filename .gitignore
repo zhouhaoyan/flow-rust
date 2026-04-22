@@ -1,0 +1,58 @@
+/target
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Node modules
+node_modules/
+
+# Log files
+server.log
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.exe
+*.out
+
+# Temporary files
+/tmp/
+/var/tmp/
+*~
+\#*#
+.#*
+
+# Claude Code configuration
+.claude/
+
+# Test coverage
+coverage/
+*.profraw
+*.profdata
+
+# Rust-specific
+Cargo.lock
+target/
+**/*.rs.bk
+
+# Playwright browser binaries
+browser_tests/playwright-report/
+browser_tests/test-results/
